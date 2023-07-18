@@ -14,10 +14,12 @@ fun Route.trackingRouting() {
     route(path = "/reads") {
         post {
             val read = call.receive<CreateRead>()
-            Reads.insertIgnore {
-                it[reads] = 0
-                it[name] = read.name
-                it[slug] = read.slug
+            transaction {
+                Reads.insertIgnore {
+                    it[reads] = 0
+                    it[name] = read.name
+                    it[slug] = read.slug
+                }
             }
             call.respondText { "${read.slug} successfully created" }
         }
