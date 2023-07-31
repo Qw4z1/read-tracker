@@ -7,6 +7,7 @@ import io.ktor.server.routing.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.plus
 import org.jetbrains.exposed.sql.insertIgnore
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
@@ -22,6 +23,18 @@ fun Route.trackingRouting() {
                 }
             }
             call.respondText { "${read.slug} successfully created" }
+        }
+        get {
+            val reads = transaction {
+                Reads.selectAll().map {
+                    FullRead(
+                        slug = it[Reads.slug],
+                        name = it[Reads.name],
+                        reads = it[Reads.reads]
+                    )
+                }
+            }
+            call.respond(reads)
         }
         patch(path = "{slug}") {
             val slug = call.parameters["slug"].toString()
