@@ -40,6 +40,7 @@ private fun Application.connectDb() {
 }
 
 private fun Application.configureRouting() {
+    install(IgnoreTrailingSlash)
     routing {
         authenticate("auth-bearer") {
             trackingRouting()
